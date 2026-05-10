@@ -397,7 +397,7 @@ Do not let the skill rewrite itself silently. Skill-level self-improvement requi
 
 ## Project Context
 
-When using this skill with a specific project, create a project context file (e.g., `docs/project-context.md`) that captures domain-specific decisions:
+When using this skill with a specific project, ask for user approval before creating or updating a project context file (e.g., `docs/project-context.md`) that captures domain-specific decisions:
 
 - **Suggested spec order**: list features in dependency order for the project.
 - **Domain interfaces**: key abstractions and isolation boundaries specific to the domain.
