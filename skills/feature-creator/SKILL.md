@@ -74,6 +74,7 @@ Create or update `specs/000-product-brief.md`.
 Required content: target users, core problem, MVP scope, supported platforms, constraints (latency, offline, cost, accessibility), privacy expectations, and external services or APIs.
 
 Gate: continue only when the brief can prioritize the first feature.
+Approval: ask the user to approve `product-brief.md` before creating the first feature spec.
 
 ### 2. Feature Spec
 
@@ -84,6 +85,7 @@ Required sections: `Goal`, `Users`, `User Stories`, `Requirements`, `Acceptance 
 Requirements must include functional requirements (`FR-*`), non-functional requirements (`NFR-*`), and harness requirements (`HR-*`). Acceptance criteria should use observable Given/When/Then-style checks.
 
 Gate: do not design or code while open questions could change user-visible behavior.
+Approval: ask the user to approve `spec.md` before creating `design.md`.
 
 ### 3. Technical Design
 
@@ -96,6 +98,7 @@ Designs must cover test coverage, relevant conventions, required patterns, and a
 Coverage guide: unit for pure state, validation, formatting, and errors; integration for adapters with doubles; end-to-end for primary user paths; smoke for launch, missing credentials, unavailable services, and recovery.
 
 Gate: continue only when the design includes doubles or fixtures for external dependencies.
+Approval: ask the user to approve `design.md` before creating `tasks.md`.
 
 ### 4. Task Plan
 
@@ -108,6 +111,7 @@ Each task must be small, map to acceptance criteria, and name its harness covera
 Verification must cover unit, integration, and end-to-end results or deferrals; formatting/lint when available; conventions and architecture; manual smoke; local self-review; and review feedback follow-up.
 
 Gate: implement only after the task list covers the feature spec.
+Approval: ask the user to approve `tasks.md` before starting implementation.
 
 ### 5. Implementation
 
@@ -121,6 +125,7 @@ For each task:
 7. Address feedback in small follow-up changes and re-run relevant validation.
 
 Return to the spec when implementation reveals an uncaptured product, privacy, platform, or API decision.
+Approval: ask the user to approve the completed implementation before final validation.
 
 ### 6. Validation
 
@@ -131,6 +136,7 @@ Required sections: `Automated Checks`, `Manual Smoke Test`, `Review Loop`, `Know
 Validation must mention unit, integration, and end-to-end results or deferrals; manual smoke result; formatting/convention checks; local self-review; agent review requests; review feedback addressed or open; and architecture or pattern gaps.
 
 Gate: a feature is done only when validation proves acceptance criteria or clearly documents remaining gaps.
+Approval: ask the user to approve `validation.md` before marking the feature done.
 
 ### 7. Harness Feedback
 
@@ -140,7 +146,8 @@ Required sections: `Signal`, `Root Cause`, `Harness Update`, `Follow-Up`.
 
 Classify root cause as spec gap, test gap, convention gap, pattern gap, architecture gap, or implementation bug. Then update the earliest artifact that should have prevented it, add the smallest check that catches it next time, and update `tasks.md` and `validation.md`.
 
-Do not bury durable feedback only in chat or commit messages. Ask for approval before feedback-driven behavior changes.
+Do not bury durable feedback only in chat or commit messages.
+Approval: ask the user to approve `feedback.md` and any feedback-driven behavior changes before applying them.
 
 ### 8. Harness Self-Improvement
 
