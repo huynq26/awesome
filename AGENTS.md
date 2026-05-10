@@ -16,6 +16,19 @@ Use its spec-driven workflow before implementation:
 - harness feedback,
 - harness self-improvement.
 
+## Shared Bug-Fix Workflow
+
+For bug fixes, regressions, or defect investigations, follow `skills/bug-fix/SKILL.md` as the source of truth.
+
+Use its evidence-driven workflow before touching code:
+- assess,
+- investigate,
+- plan,
+- implement,
+- verify,
+- harness feedback,
+- harness self-improvement.
+
 Ask for clarification when a stage output is uncertain. Ask for approval before moving to the next stage or changing harness instructions.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
