@@ -1,6 +1,6 @@
 ---
 name: feature-creator
-description: Create spec-driven feature plans and a self-improving development harness before implementation. Use when Codex needs to turn an app idea or feature request into a product brief, feature spec, technical design, task list, validation plan, test coverage strategy, coding conventions, design patterns, architecture guardrails, and feedback loops that improve the process or instructions; especially when the user wants to develop a Windows app, speech translation app, or any feature through specification-first workflow before writing production code.
+description: Turn an app idea or feature request into a workable product through spec-driven development. Drives a structured workflow from product brief through feature spec, technical design, task plan, implementation, validation, and harness feedback — ensuring test coverage, coding conventions, design patterns, architecture guardrails, and self-improving feedback loops are established before production code is written.
 ---
 
 # Feature Creator
@@ -33,8 +33,8 @@ The harness should evolve from evidence. Do not change the process because of ta
 - Do not implement production code until the relevant spec, design, and task list are accepted.
 - Keep each feature small enough to test independently.
 - Write or update tests for every implementation task.
-- Prefer fake microphones, fake API clients, fixture audio, and replayed events during development.
-- Keep API keys and raw user audio out of source control.
+- Prefer test doubles, fake clients, fixture data, and replayed events during development.
+- Keep secrets and sensitive user data out of source control.
 - List open questions instead of guessing when behavior is unclear.
 - Capture coding convention, design pattern, and architecture decisions before implementation.
 - At every workflow stage, ask for clarification when the expected output is uncertain.
@@ -48,12 +48,12 @@ Use this layout as the project grows:
 ```text
 specs/
   000-product-brief.md
-  001-audio-capture/
+  001-<first-feature>/
     spec.md
     design.md
     tasks.md
     validation.md
-  002-english-translation/
+  002-<next-feature>/
     spec.md
     design.md
     tasks.md
@@ -76,12 +76,13 @@ Create or update `specs/000-product-brief.md`.
 
 Answer:
 
-- Who uses this app?
-- What language or languages can they speak?
-- Is the output English text only, or English audio too?
-- Is push-to-talk acceptable for the first version?
-- What is more important for the first version: accuracy, latency, or offline support?
-- What privacy expectations apply to recorded audio and transcripts?
+- Who are the target users?
+- What core problem does this app solve for them?
+- What platforms must the first version support?
+- What is the smallest useful version (MVP scope)?
+- What are the key constraints (latency, offline, cost, accessibility)?
+- What privacy expectations apply to user data?
+- What external services or APIs are involved, if any?
 
 Gate: continue only when the product brief has enough detail to prioritize the first feature.
 
@@ -194,14 +195,7 @@ Use this template:
 - <Risk and mitigation>
 ```
 
-For the Windows live translation app, prefer designs that isolate:
-
-- `MicrophoneCapture`: microphone permissions, start, stop, audio frames, and level state.
-- `TranslationClient`: one completed speech turn to English text.
-- `RealtimeTranscriptClient`: optional partial transcript stream.
-- `TranscriptStore`: ordered turns, timestamps, retry state, and clear history.
-
-Gate: continue only when the design has test doubles for microphone and network dependencies.
+Gate: continue only when the design includes test doubles for external dependencies.
 
 Approval: ask the user to approve `design.md` before creating `tasks.md`.
 
@@ -212,15 +206,15 @@ Every design must include:
 - A test coverage plan for the feature.
 - A coding convention note when the feature introduces new files, names, errors, logs, or configuration.
 - A design pattern note when the feature introduces adapters, retries, cancellation, streaming, persistence, or state transitions.
-- An architecture boundary note that prevents UI code from owning microphone, network, translation, or persistence details.
+- An architecture boundary note that prevents UI code from directly owning platform, network, or persistence details.
 
-For the translation app:
+Tailor coverage to the project's domain:
 
-- Unit tests should cover pure state transitions, validation, ordering, retry, and transcript formatting.
-- Integration tests should cover adapters with fake microphone input and fake translation clients.
-- End-to-end tests should cover the main listening-to-English-output path once an app shell exists.
-- Smoke tests should cover launch, missing microphone, missing API key, network failure, retry, and clear transcript.
-- Fixture tests should use short audio files, fake API responses, and replayed realtime events.
+- Unit tests should cover pure state transitions, validation, formatting, and error cases.
+- Integration tests should cover adapters with test doubles for external dependencies.
+- End-to-end tests should cover the primary user path once an app shell exists.
+- Smoke tests should cover launch, missing credentials, unavailable services, and error recovery.
+- Fixture tests should use representative sample data, fake API responses, and replayed events.
 
 ### 4. Task Plan
 
@@ -401,83 +395,26 @@ Choose the update target by scope:
 
 Do not let the skill rewrite itself silently. Skill-level self-improvement requires explicit user approval.
 
-## First Specs For The Translation App
+## Project Context
 
-Start with these specs before choosing the Windows UI framework:
+When using this skill with a specific project, create a project context file (e.g., `docs/project-context.md`) that captures domain-specific decisions:
 
-1. `000-product-brief`: define MVP boundaries and privacy expectations.
-2. `001-audio-capture`: record or stream microphone input behind a testable adapter.
-3. `002-english-translation`: translate a completed speech turn into English text.
-4. `003-transcript-ui`: show current, completed, failed, retried, and cleared transcript states.
-5. `004-realtime-mode`: optional low-latency captions after the turn-based MVP works.
+- **Suggested spec order**: list features in dependency order for the project.
+- **Domain interfaces**: key abstractions and isolation boundaries specific to the domain.
+- **Harness standards**: test coverage, coding conventions, design patterns, and architecture boundaries specific to the project.
+- **API and service notes**: external services, APIs, or platforms the project depends on.
+- **Feedback loop rules**: domain-specific feedback patterns observed during development.
 
-## Harness Standards For The Translation App
+Reference the project context file from specs and designs. Keep it updated as feedback reveals new project-specific patterns.
 
-Use these standards unless a feature spec explicitly changes them.
-
-### Test Coverage
-
-- Unit: domain state, transcript ordering, retries, errors, clearing, and settings validation.
-- Integration: microphone adapter with fixture audio, translation client with fake responses, transcript store with real local persistence when added.
-- End-to-end: launch app, start listening, receive English text, retry failed translation, clear transcript.
-- Smoke: missing microphone, missing API key, network unavailable, permission denied, app restart.
-- Fixtures: short audio clips, fake translation payloads, replayed realtime events, and error responses.
-
-### Coding Conventions
-
-- Keep platform code behind adapters instead of calling Windows APIs directly from UI code.
-- Keep network code behind clients instead of mixing API calls into domain or UI state.
-- Use clear names that describe user behavior: `StartListening`, `StopListening`, `TranslateTurn`, `RetryTurn`, `ClearTranscript`.
-- Treat cancellation, retry, and error messages as first-class behavior.
-- Redact API keys and avoid logging raw audio or full transcripts unless the product brief explicitly allows it.
-
-### Design Patterns
-
-- Use adapter interfaces for microphone, translation, realtime transcription, and persistence.
-- Use test doubles for all microphone and network dependencies.
-- Keep UI state separate from domain state so tests can verify behavior without launching the app.
-- Model transcript turns explicitly: pending, completed, failed, retrying, and cleared.
-- Prefer append-only event handling for realtime streams, then derive display state from ordered turns.
-
-### Architecture
-
-- UI layer: renders controls, transcript state, loading state, and recoverable errors.
-- Domain layer: owns listening sessions, turn state, retry rules, and transcript ordering.
-- Platform layer: owns Windows microphone permissions and audio capture.
-- Network layer: owns translation and realtime API clients.
-- Persistence layer: owns local settings, transcript retention, and any cached fixtures.
-- Test harness: owns fake adapters, fixture audio, replayed event streams, and smoke-test scripts.
-
-### Feedback Loop
-
-- If a unit test fails repeatedly, update the design pattern or domain-state rules before adding more implementation patches.
-- If integration tests require real services too early, add fake clients, fixtures, or replay files.
-- If end-to-end tests are flaky, record the cause in `feedback.md` and separate product failures from timing, environment, or fixture problems.
-- If manual smoke testing finds a missed behavior, add it to acceptance criteria and create automated coverage when practical.
-- If code review finds repeated style or layering issues, promote the lesson into coding conventions or architecture boundaries.
-- If user feedback changes expected behavior, update the feature spec before changing code.
-- If the same feedback repeats across features, propose a harness self-improvement update.
-
-## API Notes For Future Specs
-
-Current OpenAI docs describe two useful paths:
-
-- Turn-based translation: the Audio API translations endpoint translates supported audio files into English and currently uses `whisper-1`.
-- Realtime prototype: Realtime transcription sessions can stream transcript deltas and completed transcription events; completed turns can then be translated to English.
-
-Use these as design inputs, not as implementation commitments. The feature spec should still decide whether the MVP requires turn-based translation, realtime captions, or both.
-
-References:
-
-- https://platform.openai.com/docs/guides/speech-to-text
-- https://platform.openai.com/docs/guides/realtime-transcription
+The skill's workflow stages, templates, and harness process remain generic. Project-specific content lives in the project context file, not in this skill.
 
 ## Reusable Prompts
 
 ### Create A Product Brief
 
 ```text
-Create specs/000-product-brief.md for a Windows app that listens to spoken language and translates it to English text.
+Create specs/000-product-brief.md for <describe your app idea in one sentence>.
 Ask only for decisions that materially affect the MVP.
 Ask for approval before moving to feature specs.
 Do not design or implement code yet.
@@ -500,7 +437,7 @@ Do not write implementation code.
 ```text
 Create specs/<number>-<feature>/design.md from the accepted spec.
 Include interfaces, architecture boundaries, design patterns, coding conventions, data flow, state/errors, tests, and risks.
-Use fake clients or fixtures for microphone and network dependencies.
+Use test doubles or fixtures for external dependencies.
 Ask for clarification if architecture boundaries or harness coverage are uncertain.
 Ask for approval before creating tasks.
 Do not write implementation code.
